@@ -1,0 +1,43 @@
+apiVersion: extensions/v1beta1
+kind: Deployment 
+metadata:
+  name: nsqlookupd
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: nsq
+        component: nsqlookupd
+    spec:
+      containers:
+      - name: nsqlookupd
+        image: nsqio/nsq 
+        imagePullPolicy: Always
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        ports:
+        - containerPort: 4160
+          name: tcp
+        - containerPort: 4161
+          name: http
+        livenessProbe:
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 2
+        command:
+          - /bin/sh
+          - -c
+          - "nsqlookupd 2>&1 > /dev/stdout "
+      terminationGracePeriodSeconds: 5

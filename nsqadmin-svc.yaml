@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: nsqadmin
+  labels:
+    name: "nsqadmin"
+spec:
+  clusterIP: 10.96.0.4
+  selector:
+    app: nsq
+    component: nsqadmin
+  ports:
+  - port: 4171
+    name: http
+    targetPort: 4171
